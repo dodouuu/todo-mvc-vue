@@ -23,10 +23,7 @@
         <input id="toggle-all" type="checkbox" class="toggle-all" />
         <label for="toggle-all"></label>
         <ul class="todo-list">
-          <li v-for="todo in filteredTodos" 
-          :key="todo.id" 
-          class="todo" 
-          :class="{completed: todo.completed}">
+          <li v-for="todo in filteredTodos" :key="todo.id" class="todo" :class="{completed: todo.completed}">
             <div class="view">
               <input v-model="todo.completed" type="checkbox" class="toggle" />
               <label for="">{{todo.title}}</label>
@@ -41,13 +38,14 @@
         <span class="todo-count"> <strong>{{remaining}}</strong> items left </span>
         <ul class="filters">
           <li>
-            <a href="#/all" @click="setVisibility('all')">All</a>
+            <a href="#/all" @click="setVisibility('all')" :class="{selected: visibility==='all'}">All</a>
           </li>
           <li>
-            <a href="#/active" @click="setVisibility('active')">Active</a>
+            <a href="#/active" @click="setVisibility('active')" :class="{selected: visibility==='active'}">Active</a>
           </li>
           <li>
-            <a href="#/completed" @click="setVisibility('completed')">Completed</a>
+            <a href="#/completed" @click="setVisibility('completed')"
+              :class="{selected: visibility==='completed'}">Completed</a>
           </li>
         </ul>
         <button class="clear-completed">
@@ -90,7 +88,7 @@
           },
         ],
         newTodo: '',
-        visibility: 'all'
+        visibility: 'all',
       },
       methods: {
         addTodo() {
@@ -113,7 +111,7 @@
           this.todos = this.todos.filter(_todo => _todo.id !== todo.id)
         },
         setVisibility(visibility) {
-          this.visibility = visibility;
+          this.visibility = visibility
         }
       },
       computed: {
