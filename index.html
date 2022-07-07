@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>todo</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/todomvc-app-css@2.3.0/index.css">
+</head>
+
+<body>
+
+  <div id="app">
+    <section class="todoapp">
+      <header>
+        <h1>Todos</h1>
+      </header>
+      <input v-model="newTodo" @keyup.enter="addTodo" type="text" class="new-todo" autofocus placeholder="需要做什麼？" />
+
+      <main class="main">
+        <input id="toggle-all" type="checkbox" class="toggle-all" />
+        <label for="toggle-all"></label>
+        <ul class="todo-list">
+          <li v-for="todo in todos" :key="todo.id" class="todo" :class="{completed: todo.completed}">
+            <div class="view">
+              <input type="checkbox" class="toggle" />
+              <label for="">{{todo.title}}</label>
+              <button @click="removeTodo(todo)" class="destroy"></button>
+            </div>
+            <input type="text" class="edit" />
+          </li>
+        </ul>
+      </main>
+
+      <footer class="footer">
+        <span class="todo-count"> <strong>3</strong> items left </span>
+        <ul class="filters">
+          <li>
+            <a href="#/all">All</a>
+          </li>
+          <li>
+            <a href="#/active">Active</a>
+          </li>
+          <li>
+            <a href="#/completed">Completed</a>
+          </li>
+        </ul>
+        <button class="clear-completed">
+          Clear completed
+        </button>
+      </footer>
+    </section>
+  </div>
+
+  <!-- vue -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <!-- uuid -->
+  <script src="https://unpkg.com/uuid@latest/dist/umd/uuidv4.min.js"></script>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        todos: [
+          {
+            id: uuidv4(),
+            title: '學習 Vue Template 的使用',
+            completed: true
+          },
+          {
+            id: uuidv4(),
+            title: '學習在 Vue Template 中進行條件判斷',
+            completed: false
+          },
+          {
+            id: uuidv4(),
+            title: '學習在 Vue Template 中使用迴圈',
+            completed: false
+          },
+        ],
+        newTodo: '',
+      },
+      methods: {
+        addTodo() {
+          //去除字串前後多餘空格
+          const title = this.newTodo && this.newTodo.trim()
+          if (!title) return
+          //把 newTodo 放到 todos
+          this.todos.push(
+            {
+              id: uuidv4(),
+              title,
+              completed: false,
+            }
+          )
+          //newTodo 的內容清空
+          this.newTodo = "";
+        },
+        removeTodo(todo) {
+          console.log('remove todo=', todo.id)
+          this.todos = this.todos.filter(_todo => _todo.id !== todo.id)
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
