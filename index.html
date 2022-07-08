@@ -20,7 +20,12 @@
       <input v-model="newTodo" @keyup.enter="addTodo" type="text" class="new-todo" autofocus placeholder="需要做什麼？" />
 
       <main class="main" v-show="todos.length">
-        <input id="toggle-all" type="checkbox" class="toggle-all" />
+        <input 
+          id="toggle-all" 
+          type="checkbox" 
+          class="toggle-all" 
+          v-model="allDone" 
+        />
         <label for="toggle-all"></label>
         <ul class="todo-list">
           <li v-for="todo in filteredTodos" :key="todo.id" class="todo"
@@ -137,6 +142,21 @@
         },
         filteredTodos() {
           return filters[this.visibility](this.todos)
+        },
+        allDone: {
+          get() {
+            return this.remaining === 0
+          },
+          set(value) {
+            this.todos = this.todos.map((todo) =>
+              (
+                {
+                  ...todo,
+                  completed: value
+                }
+              )
+            )
+          }
         }
       },
       filters: {
