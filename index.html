@@ -61,6 +61,7 @@
   <script src="https://unpkg.com/uuid@latest/dist/umd/uuidv4.min.js"></script>
 
   <script>
+    const STORAGE_KEY = 'todomvc-app-vue'
     const filters = {
       all: (todos) => todos,
       active: (todos) => todos.filter((todo) => !todo.completed),
@@ -70,25 +71,9 @@
     new Vue({
       el: '#app',
       data: {
-        todos: [
-          {
-            id: uuidv4(),
-            title: '學習 Vue Template 的使用',
-            completed: true
-          },
-          {
-            id: uuidv4(),
-            title: '學習在 Vue Template 中進行條件判斷',
-            completed: false
-          },
-          {
-            id: uuidv4(),
-            title: '學習在 Vue Template 中使用迴圈',
-            completed: false
-          },
-        ],
+        todos: [],
         newTodo: '',
-        visibility: 'all',
+        visibility: 'all'
       },
       methods: {
         addTodo() {
@@ -115,7 +100,9 @@
         setVisibility(visibility) {
           this.visibility = visibility
         },
-
+        saveStorage() {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(this.todos))
+        }
       },
       computed: {
         remaining() {
@@ -130,6 +117,17 @@
           return n === 1 ? "item" : "items";
         }
       },
+      watch: {
+        todos: {
+          handler: function () {
+            this.saveStorage()
+          },
+          deep: true
+        }
+      },
+      created() {
+        this.todos = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []
+      }
     })
   </script>
 </body>
