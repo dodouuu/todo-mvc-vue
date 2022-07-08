@@ -23,13 +23,20 @@
         <input id="toggle-all" type="checkbox" class="toggle-all" />
         <label for="toggle-all"></label>
         <ul class="todo-list">
-          <li v-for="todo in filteredTodos" :key="todo.id" class="todo" :class="{completed: todo.completed}">
+          <li v-for="todo in filteredTodos" :key="todo.id" class="todo"
+            :class="{completed: todo.completed, editing: todo.id === currentEditTodo.id}">
             <div class="view">
               <input v-model="todo.completed" type="checkbox" class="toggle" />
-              <label for="">{{todo.title}}</label>
+              <label @dblclick="editTodo(todo)">{{todo.title}}</label>
               <button @click="removeTodo(todo)" class="destroy"></button>
             </div>
-            <input type="text" class="edit" />
+            <input 
+            v-model="currentEditTodo.title" 
+            v-todo-focus="todo.id === currentEditTodo.id"
+            @keyup.esc="cancelEdit"
+            @keyup.enter="doneEdit"
+            @blur="doneEdit" 
+            type="text" class="edit" />
           </li>
         </ul>
       </main>
@@ -72,6 +79,7 @@
       el: '#app',
       data: {
         todos: [],
+        currentEditTodo: {},
         newTodo: '',
         visibility: 'all'
       },
@@ -93,6 +101,25 @@
         },
         removeTodo(todo) {
           this.todos = this.todos.filter(_todo => _todo.id !== todo.id)
+        },
+        editTodo(todo) {
+          this.currentEditTodo = { ...todo }
+        },
+        cancelEdit() {
+          this.currentEditTodo = {}
+        },
+        doneEdit() {
+          this.todos = this.todos.map(
+            todo => {
+              if (todo.id === this.currentEditTodo.id) {
+                return {
+                  ...this.currentEditTodo
+                }
+              } else {
+                return todo
+              }
+            }).filter(todo => todo.title.trim())
+          this.currentEditTodo = {}
         },
         removeCompleted() {
           this.todos = filters.active(this.todos);
@@ -127,7 +154,14 @@
       },
       created() {
         this.todos = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []
-      }
+      },
+      directives: {
+        'todo-focus': function (el, binding) {
+          if (binding.value) {
+            el.focus()
+          }
+        }
+      },
     })
   </script>
 </body>
